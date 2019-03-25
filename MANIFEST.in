@@ -1,0 +1,3 @@
+include README.md
+recursive-include new_model_template/components.py
+recursive-include new_model_template/model_specs *.yaml
