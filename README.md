@@ -19,7 +19,7 @@ To set up a new research environment, open up a terminal on the cluster and run:
 ```bash
 $> conda create --name=neonatal python=3.6
 ...standard conda install stuff...
-$> source activate neonatal
+$> conda activate neonatal
 (neonatal) $> conda install redis cython
 (neonatal) $> git clone ssh://git@stash.ihme.washington.edu:7999/cste/neonatal.git
 ...you may need to do username/password stuff here...
