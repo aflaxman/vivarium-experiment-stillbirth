@@ -22,8 +22,8 @@ setup(
         'vivarium-cluster-tools==1.0.3',
         'vivarium==0.8.18',
         'vivarium-gbd-access==2.0.1',
-        'vivarium_public_health==0.9.8',
-        'vivarium_inputs[data]==2.0.2',
+        'vivarium_public_health==0.9.10',
+        'vivarium_inputs[data]==2.0.3',
         'gbd_mapping==2.0.2',
     ],
 )
