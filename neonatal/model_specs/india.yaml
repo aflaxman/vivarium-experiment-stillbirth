@@ -17,6 +17,8 @@ components:
             - NeonatalSWC_without_incidence('neonatal_sepsis_and_other_neonatal_infections')
             - NeonatalSWC_without_incidence('neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma')
             - NeonatalSWC_without_incidence('hemolytic_disease_and_other_neonatal_jaundice')
+        disease.special_disease:
+            - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
         risks:
             - Risk('risk_factor.low_birth_weight_and_short_gestation')
             - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality')
@@ -40,6 +42,9 @@ components:
             - RiskEffect('risk_factor.child_underweight', 'cause.diarrheal_diseases.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.lower_respiratory_infections.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.measles.incidence_rate')
+    neonatal:
+        components:
+            - NeonatalPretermDataLoader()
 
 configuration:
     input_data:
@@ -65,6 +70,16 @@ configuration:
         exit_age: 5
         population_size: 100_000
 
+    child_stunting:
+        category_thresholds: [7, 8, 9]
+    child_wasting:
+        category_thresholds: [7, 8, 9]
+    child_underweight:
+        category_thresholds: [7, 8, 9]
 
+    protein_energy_malnutrition:
+        threshold: ['cat1', 'cat2'] # provide the categories to get PEM.
+        mortality: True
+        recoverable: True
 
    
