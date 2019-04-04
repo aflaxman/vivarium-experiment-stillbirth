@@ -36,7 +36,7 @@ components:
             - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
             - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
 
-            - Risk('alternative_risk_factor.child_underweight'
+            - Risk('alternative_risk_factor.child_underweight')
             - RiskEffect('risk_factor.child_underweight', 'cause.diarrheal_diseases.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.lower_respiratory_infections.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.measles.incidence_rate')
