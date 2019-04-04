@@ -117,3 +117,6 @@ dmypy.json
 
 # Pycharm project settings
 .idea/
+
+# Vivarium artifacts
+*.hdf
