@@ -19,7 +19,7 @@ components:
             - NeonatalSWC_without_incidence('hemolytic_disease_and_other_neonatal_jaundice')
         risks:
             - Risk('risk_factor.low_birth_weight_and_short_gestation')
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality'
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality')
             - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma.excess_mortality')
             - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
 
