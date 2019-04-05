@@ -4,7 +4,7 @@ class NeonatalPretermDataLoader:
 
     def __init__(self):
         self.name = 'neonatal_preterm_data_loader'
-        self.cause = EntityString('cause.neonatal_preterm')
+        self.cause = EntityString('cause.neonatal_preterm_birth')
         self.risk = EntityString('risk_factor.low_birth_weight_and_short_gestation')
 
     def setup(self, builder):
