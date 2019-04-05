@@ -42,7 +42,7 @@ def nat():
 
 
 def supernat():
-    locations = ['Sub-saharan Africa', 'South Asia',
+    locations = ['Sub-Saharan Africa', 'South Asia',
                  'Low SDI', 'Low-middle SDI', 'Middle SDI', 'High-middle SDI', 'High SDI']
     run(locations)
 
