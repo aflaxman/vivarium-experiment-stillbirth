@@ -28,7 +28,7 @@ def run(locations):
         with open("template.yaml") as f:
             template_spec = f.read()
 
-        template_spec.format(name=name, fname=fname)
+        template_spec = template_spec.format(name=name, fname=fname)
 
         with open(f"{fname}.yaml", 'w') as f:
             f.write(template_spec)
