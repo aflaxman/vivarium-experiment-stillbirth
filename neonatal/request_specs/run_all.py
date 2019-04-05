@@ -30,10 +30,10 @@ def run(locations):
 
         template_spec.format(name=name, fname=fname)
 
-        with open(f"{fname}.yaml") as f:
+        with open(f"{fname}.yaml", 'w') as f:
             f.write(template_spec)
 
-        subprocess.call(f"build_artifact -v {fname}.yaml")
+        subprocess.call(["build_artifact", "-v", f"{fname}.yaml"])
 
 
 def nat():
