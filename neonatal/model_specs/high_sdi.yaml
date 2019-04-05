@@ -50,7 +50,7 @@ configuration:
     input_data:
         location: High SDI
         input_draw_number: 0
-        artifact_path: /share/costeffectiveness/artifacts/neonatal/india.hdf
+        artifact_path: /share/costeffectiveness/artifacts/neonatal/high_sdi.hdf
     interpolation:
         order: 0
         extrapolate: True
