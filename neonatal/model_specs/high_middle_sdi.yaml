@@ -48,7 +48,7 @@ components:
 
 configuration:
     input_data:
-        location: Middle-high SDI
+        location: High-middle SDI
         input_draw_number: 0
         artifact_path: /share/costeffectiveness/artifacts/neonatal/india.hdf
     interpolation:
