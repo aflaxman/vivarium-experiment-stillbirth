@@ -48,7 +48,8 @@ def supernat():
 
 
 def subnat():
-    locations = ['Uttar Pradesh', 'Kerala', 'Bihar']
+    locations = ['Uttar Pradesh, Rural', 'Uttar Pradesh, Urban', 'Kerala, Rural', 'Kerala, Urban', 'Bihar, Rural',
+                 'Bihar, Urban']
     run(locations, 'subnat')
 
 
