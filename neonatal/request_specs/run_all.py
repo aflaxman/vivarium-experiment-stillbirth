@@ -69,7 +69,7 @@ def launch():
         for level, sub_locations in locations.items():
             for loc in sub_locations:
                 loc = loc.replace(' ', '_')  # worried about spaces ruining things
-                jt.nativeSpecification = f'-w n -q all.q -l m_mem_free=20G -N {loc} -l fthread=1 -P proj_cost_effect'
+                jt.nativeSpecification = f'-V -w n -q all.q -l m_mem_free=20G -N {loc} -l fthread=1 -P proj_cost_effect'
                 jt.args = ['run_all.py', loc, level]
                 s.runJob(jt)
         s.deleteJobTemplate(jt)
