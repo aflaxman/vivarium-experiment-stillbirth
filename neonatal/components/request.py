@@ -39,7 +39,7 @@ class ResearcherRequestComponent:
         ]
         for key in keys:
             try:
-                builder.data.lad(key)
+                builder.data.load(key)
             except DataDoesNotExistError:
                 pass
 
