@@ -31,27 +31,45 @@ class ResearcherRequestComponent:
     def setup(self, builder):
 
         # Top-level things
-        builder.data.load("population.structure")
-        builder.data.load("population.theoretical_minimum_risk_life_expectancy")
-        builder.data.load("cause.all_causes.cause_specific_mortality")
-        builder.data.load("covariate.live_births_by_sex.estimate")
+        keys = [
+            "population.structure",
+            "population.theoretical_minimum_risk_life_expectancy",
+            "cause.all_causes.cause_specific_mortality",
+            "covariate.live_births_by_sex.estimate"
+        ]
+        for key in keys:
+            try:
+                builder.data.lad(key)
+            except DataDoesNotExistError:
+                pass
 
         # Cause-level things
         for cause in self.causes:
-            builder.data.load(f"cause.{cause.name}.prevalence")
-            builder.data.load(f"cause.{cause.name}.birth_prevalence")
-            builder.data.load(f"cause.{cause.name}.cause_specific_mortality")
-            builder.data.load(f"cause.{cause.name}.excess_mortality")
-            try:
-                builder.data.load(f"cause.{cause.name}.incidence")
-            except DataDoesNotExistError:
-                pass
-            builder.data.load(f"cause.{cause.name}.disability_weight")
-            for seq in cause.sequelae:
-                builder.data.load(f"sequela.{seq.name}.prevalence")
-                builder.data.load(f"sequela.{seq.name}.birth_prevalence")
+            keys = [
+                f"cause.{cause.name}.prevalence",
+                f"cause.{cause.name}.birth_prevalence",
+                f"cause.{cause.name}.cause_specific_mortality",
+                f"cause.{cause.name}.excess_mortality",
+                f"cause.{cause.name}.incidence",
+                f"cause.{cause.name}.disability_weight",
+            ]
+
+            for key in keys:
                 try:
-                    builder.data.load(f"sequela.{seq.name}.incidence")
+                    builder.data.load(key)
                 except DataDoesNotExistError:
                     pass
-                builder.data.load(f"sequela.{seq.name}.disability_weight")
+
+            for seq in cause.sequelae:
+                keys = [
+                    f"sequela.{seq.name}.prevalence",
+                    f"sequela.{seq.name}.birth_prevalence",
+                    f"sequela.{seq.name}.incidence",
+                    f"sequela.{seq.name}.disability_weight",
+                ]
+
+                for key in keys:
+                    try:
+                        builder.data.load(key)
+                    except DataDoesNotExistError:
+                        pass
