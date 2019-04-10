@@ -30,20 +30,21 @@ class LBWSGRisk:
     }
 
     def __init__(self):
-        self.name = 'low_birth_weight_and_short_gestation'
-        self.categories_by_interval = self.parse_lbwsg_categories(risk_factors.low_birth_weight_and_short_gestation.categories.to_dict())
-        self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
+        self.risk = 'low_birth_weight_and_short_gestation'
+        self.name = f'{self.risk}_risk'
 
     def setup(self, builder):
-        self.randomness = builder.randomness.get_stream(f'lbwsg')
+        self.categories_by_interval = self.parse_lbwsg_categories(builder.data.load(f'risk_factor.{self.risk}.categories'))
+        self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
+        self.randomness = builder.randomness.get_stream(f'{self.risk}.exposure_assignment')
 
         self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder,
-                                    EntityString('risk_factor.low_birth_weight_and_short_gestation')))
+                                                                                EntityString(f'risk_factor.{self.risk}')))
 
         self._bw_and_gt = pd.DataFrame(columns=['birth_weight', 'gestation_time'])
 
         self.exposure = builder.value.register_value_producer(
-            'low_birth_weight_and_short_gestation.exposure',
+            f'{self.risk}.exposure',
             source=self.get_current_exposure,
             preferred_post_processor=self.get_lbwsg_post_processor()
         )
@@ -67,7 +68,7 @@ class LBWSGRisk:
 
     def on_initialize_simulants(self, pop_data):
         # assign each sim a lbwsg category
-        category_draw = self.randomness.get_draw(pop_data.index)
+        category_draw = self.randomness.get_draw(pop_data.index, additional_key='category')
         exposure = self.exposure_parameters(pop_data.index)[self.categories_by_interval.values]
         exposure_sum = exposure.cumsum(axis='columns')
         category_index = (exposure_sum.T < category_draw).T.sum('columns')
@@ -75,8 +76,8 @@ class LBWSGRisk:
                                         index=pop_data.index, name='cat')
 
         # assign each sim a birth weight and gestation time within their category
-        draws = {'birth_weight': self.randomness.get_draw(pop_data.index),
-                 'gestation_time': self.randomness.get_draw(pop_data.index)}
+        draws = {'birth_weight': self.randomness.get_draw(pop_data.index, additional_key='birth_weight'),
+                 'gestation_time': self.randomness.get_draw(pop_data.index, additional_key='gestation_time')}
 
         self._bw_and_gt = self._bw_and_gt.append(self.convert_category_intervals_to_values(simulant_categories,
                                                                          draws, self.intervals_by_category))
