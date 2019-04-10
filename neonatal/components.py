@@ -68,7 +68,6 @@ class LBWSGRisk:
     def on_initialize_simulants(self, pop_data):
         # assign each sim a lbwsg category
         category_draw = self.randomness.get_draw(pop_data.index)
-        import pdb; pdb.set_trace()
         exposure = self.exposure_parameters(pop_data.index)[self.categories_by_interval.values]
         exposure_sum = exposure.cumsum(axis='columns')
         category_index = (exposure_sum.T < category_draw).T.sum('columns')
