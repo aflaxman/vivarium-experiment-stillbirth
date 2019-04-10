@@ -1,6 +1,5 @@
 import pandas as pd
 
-from gbd_mapping import risk_factors
 from vivarium_public_health.utilities import EntityString
 from vivarium_public_health.risks.data_transformations import get_exposure_data
 
