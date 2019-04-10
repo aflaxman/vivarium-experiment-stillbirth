@@ -30,21 +30,19 @@ class LBWSGRisk:
     }
 
     def __init__(self):
-        self.risk = 'low_birth_weight_and_short_gestation'
-        self.name = f'{self.risk}_risk'
+        self.risk = EntityString('risk_factor.low_birth_weight_and_short_gestation')
 
     def setup(self, builder):
-        self.categories_by_interval = self.parse_lbwsg_categories(builder.data.load(f'risk_factor.{self.risk}.categories'))
+        self.categories_by_interval = self.parse_lbwsg_categories(builder.data.load(f'{self.risk}.categories'))
         self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
-        self.randomness = builder.randomness.get_stream(f'{self.risk}.exposure_assignment')
+        self.randomness = builder.randomness.get_stream(f'{self.risk.name}.exposure_assignment')
 
-        self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder,
-                                                                                EntityString(f'risk_factor.{self.risk}')))
+        self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder, self.risk))
 
         self._bw_and_gt = pd.DataFrame(columns=['birth_weight', 'gestation_time'])
 
         self.exposure = builder.value.register_value_producer(
-            f'{self.risk}.exposure',
+            f'{self.risk.name}.exposure',
             source=self.get_current_exposure,
             preferred_post_processor=self.get_lbwsg_post_processor()
         )
