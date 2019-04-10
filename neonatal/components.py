@@ -50,7 +50,7 @@ class LBWSGRisk:
         builder.population.initializes_simulants(self.on_initialize_simulants)
 
     def get_current_exposure(self, index):
-        return self._bw_and_gt.iloc[index]
+        return self._bw_and_gt.loc[index]
 
     def get_lbwsg_post_processor(self):
         cats = self.categories_by_interval
