@@ -35,7 +35,7 @@ class LBWSGRisk:
     def setup(self, builder):
         self.categories_by_interval = self.parse_lbwsg_categories(builder.data.load(f'{self.risk}.categories'))
         self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
-        self.randomness = builder.randomness.get_stream(f'{self.risk.name}.exposure_assignment')
+        self.randomness = builder.randomness.get_stream(f'{self.risk.name}.exposure')
 
         self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder, self.risk))
 
