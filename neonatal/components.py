@@ -1,6 +1,5 @@
 import pandas as pd
 
-from gbd_mapping import risk_factors
 from vivarium_public_health.utilities import EntityString
 from vivarium_public_health.risks.data_transformations import get_exposure_data
 from vivarium_public_health.disease import RiskAttributableDisease
@@ -51,7 +50,7 @@ class LBWSGRisk:
         builder.population.initializes_simulants(self.on_initialize_simulants)
 
     def get_current_exposure(self, index):
-        return self._bw_and_gt.iloc[index]
+        return self._bw_and_gt.loc[index]
 
     def get_lbwsg_post_processor(self):
         cats = self.categories_by_interval
