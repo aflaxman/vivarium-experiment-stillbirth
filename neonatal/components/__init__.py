@@ -1,2 +1,4 @@
-from .request import ResearcherRequestComponent
-from .components import LBWSGRisk, NeonatalPreterm, NeonatalPretermDataLoader
+from .data_request import ResearcherRequestComponent
+from .disease import NeonatalPreterm
+from .risk import LBWSGRisk
+from .intervention import NeonatalIntervention
