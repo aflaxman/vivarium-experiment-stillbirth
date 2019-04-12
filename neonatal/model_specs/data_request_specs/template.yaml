@@ -1,0 +1,37 @@
+plugins:
+    optional:
+        data:
+            controller: "vivarium_public_health.dataset_manager.ArtifactManager"
+            builder_interface: "vivarium_public_health.dataset_manager.ArtifactManagerInterface"
+
+components:
+    neonatal.components:
+        - ResearcherRequestComponent()
+
+configuration:
+    input_data:
+        location: {name}
+        input_draw_number: 0
+        artifact_path: /share/costeffectiveness/artifacts/neonatal/researcher_request/{fname}.hdf
+    interpolation:
+        order: 0
+        extrapolate: True
+    time:
+        start:
+            year: 2021
+            month: 1
+            day: 1
+        end:
+            year: 2026
+            month: 1
+            day: 1
+        step_size: 1
+    population:
+        age_start: 0
+        age_end: 5
+        exit_age: 5
+        population_size: 100_000
+
+
+
+
