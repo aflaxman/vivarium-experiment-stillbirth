@@ -43,8 +43,8 @@ components:
             - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
     neonatal:
         components:
-            - NeonatalPretermDataLoader()
             - LBWSGRisk()
+            - NeonatalPreterm()
 
 configuration:
     input_data:
