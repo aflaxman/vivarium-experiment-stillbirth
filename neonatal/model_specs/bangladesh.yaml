@@ -17,6 +17,34 @@ components:
             - NeonatalSWC_without_incidence('neonatal_sepsis_and_other_neonatal_infections')
             - NeonatalSWC_without_incidence('neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma')
             - NeonatalSWC_without_incidence('hemolytic_disease_and_other_neonatal_jaundice')
+        risks:
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality')
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma.excess_mortality')
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
+
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.diarrheal_diseases.excess_mortality')
+            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.lower_respiratory_infections.excess_mortality')
+
+            - Risk('alternative_risk_factor.child_wasting')
+            - RiskEffect('risk_factor.child_wasting', 'cause.diarrheal_diseases.incidence_rate')
+            - RiskEffect('risk_factor.child_wasting', 'cause.lower_respiratory_infections.incidence_rate')
+            - RiskEffect('risk_factor.child_wasting', 'cause.measles.incidence_rate')
+
+            - Risk('alternative_risk_factor.child_stunting')
+            - RiskEffect('risk_factor.child_stunting', 'cause.diarrheal_diseases.incidence_rate')
+            - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
+            - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
+
+            - Risk('alternative_risk_factor.child_underweight')
+            - RiskEffect('risk_factor.child_underweight', 'cause.diarrheal_diseases.incidence_rate')
+            - RiskEffect('risk_factor.child_underweight', 'cause.lower_respiratory_infections.incidence_rate')
+            - RiskEffect('risk_factor.child_underweight', 'cause.measles.incidence_rate')
+        disease.special_disease:
+            - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
+    neonatal:
+        components:
+            - LBWSGRisk()
+            - NeonatalPreterm()
 
 configuration:
     input_data:
@@ -32,7 +60,7 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2026
+            year: 2022
             month: 1
             day: 1
         step_size: 1
@@ -40,8 +68,19 @@ configuration:
         age_start: 0
         age_end: 5
         exit_age: 5
-        population_size: 100_000
+        population_size: 10_000
 
+    child_stunting:
+        category_thresholds: [7, 8, 9]
+    child_wasting:
+        category_thresholds: [7, 8, 9]
+    child_underweight:
+        category_thresholds: [7, 8, 9]
+
+    protein_energy_malnutrition:
+        threshold: ['cat1', 'cat2'] # provide the categories to get PEM.
+        mortality: True
+        recoverable: True
 
 
    
