@@ -103,15 +103,8 @@ class LBWSGRisk:
 
 
 class LBWSGRiskEffect:
-    """A component to model the impact of a risk factor on the target rate of
-    some affected entity. This component can source data either from
-    builder.data or from parameters supplied in the configuration.
-    For a risk named 'risk' that affects 'affected_risk' and 'affected_cause',
-    the configuration would look like:
-    configuration:
-        effect_of_risk_on_affected_risk:
-            exposure_parameters: 2
-            incidence_rate: 10
+    """A component to model the impact of the low birth weight and short gestation
+     risk factor on the target rate of some affected entity.
     """
 
     configuration_defaults = {
