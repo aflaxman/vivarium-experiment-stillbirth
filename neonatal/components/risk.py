@@ -1,5 +1,8 @@
-from vivarium_public_health.utilities import EntityString
-from vivarium_public_health.risks.data_transformations import get_exposure_data
+import pandas as pd
+
+from vivarium_public_health.utilities import EntityString, TargetString
+import vivarium_public_health.risks.data_transformations as data_transformations
+from vivarium_public_health.risks import RiskEffect
 
 
 class LBWSGRisk:
@@ -19,7 +22,7 @@ class LBWSGRisk:
         self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
         self.randomness = builder.randomness.get_stream(f'{self.risk.name}.exposure')
 
-        self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder, self.risk))
+        self.exposure_parameters = builder.lookup.build_table(data_transformations.get_exposure_data(builder, self.risk))
 
         self._bw_and_gt = pd.DataFrame(columns=['birth_weight', 'gestation_time'])
 
@@ -97,3 +100,56 @@ class LBWSGRisk:
         cats = cats['cat']
         cats.index = idx
         return cats
+
+
+class LBWSGRiskEffect:
+    """A component to model the impact of the low birth weight and short gestation
+     risk factor on the target rate of some affected entity.
+    """
+
+    configuration_defaults = {
+        'effect_of_risk_on_target': {
+            'measure': {
+                'relative_risk': None,
+            }
+        }
+    }
+
+    def __init__(self, target: str):
+        """
+        Parameters
+        ----------
+        target :
+            Type, name, and target rate of entity to be affected by risk factor,
+            supplied in the form "entity_type.entity_name.measure"
+            where entity_type should be singular (e.g., cause instead of causes).
+        """
+        self.risk = EntityString('risk_factor.low_birth_weight_and_short_gestation')
+        self.target = TargetString(target)
+        self.configuration_defaults = {
+            f'effect_of_{self.risk.name}_on_{self.target.name}': {
+                self.target.measure: RiskEffect.configuration_defaults['effect_of_risk_on_target']['measure']
+            }
+        }
+
+    def setup(self, builder):
+        self.randomness = builder.randomness.get_stream(f'effect_of_{self.risk.name}_on_{self.target.name}')
+        self.relative_risk = builder.lookup.build_table(self.get_relative_risk_data(builder))
+        self.population_attributable_fraction = builder.lookup.build_table(
+            data_transformations.get_population_attributable_fraction_data(builder, self.risk, self.target, self.randomness)
+        )
+
+        self.exposure_effect = data_transformations.get_exposure_effect(builder, self.risk)
+
+        builder.value.register_value_modifier(f'{self.target.name}.{self.target.measure}',
+                                              modifier=self.adjust_target)
+        builder.value.register_value_modifier(f'{self.target.name}.{self.target.measure}.paf',
+                                              modifier=self.population_attributable_fraction)
+
+    def adjust_target(self, index, target):
+        return self.exposure_effect(target, self.relative_risk(index))
+
+    def get_relative_risk_data(self, builder):
+        rr_data = data_transformations.get_relative_risk_data(builder, self.risk, self.target, self.randomness)
+        rr_data['cat212'] = (rr_data['cat106'] + rr_data['cat116']) / 2
+        return rr_data
