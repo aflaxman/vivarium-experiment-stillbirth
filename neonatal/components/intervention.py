@@ -62,7 +62,7 @@ class NeonatalIntervention:
 
 
 def validate_configuration(config):
-    if not (0 <= config.proportion <= 1):
+    if not (0 <= config['proportion'] <= 1):
         raise ValueError(f'The proportion for neonatal intervention must be between 0 and 1.'
                          f'You specified {config.proportion}.')
     for key in config:
