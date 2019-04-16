@@ -42,7 +42,7 @@ class LBWSGRisk:
     def get_current_exposure(self, index):
         new_index = index.difference(self._cached_exposure.index)
         if not new_index.empty:
-            self._cached_exposure.append(self._raw_exposure(new_index))
+            self._cached_exposure = self._cached_exposure.append(self._raw_exposure(new_index))
         return self._cached_exposure.loc[index]
 
     def on_initialize_simulants(self, pop_data):
@@ -61,9 +61,7 @@ class LBWSGDistribution:
         self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
         self.max_gt_by_bw, self.max_bw_by_gt = self._get_boundary_mappings()
 
-        self.exposure_parameters = builder.lookup.build_table(
-            data_transformations.get_exposure_data(builder, self.risk)
-        )
+        self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder, self.risk))
 
     def get_birth_weight_and_gestational_age(self, index):
         category_draw = self.randomness.get_draw(index, additional_key='category')
@@ -75,13 +73,14 @@ class LBWSGDistribution:
 
         return self._convert_to_continuous(categorical_exposure)
 
-    def convert_to_categorical(self, exposure):
+    def convert_to_categorical(self, exposure, _):
         exposure = self._convert_boundary_cases(exposure)
         categorical_exposure = self.categories_by_interval.iloc[self._get_categorical_index(exposure)]
         categorical_exposure.index = exposure.index
         return categorical_exposure
 
     def _convert_boundary_cases(self, exposure):
+        eps = 1e-4
         outside_bounds = self._get_categorical_index(exposure) == -1
         shift_down = outside_bounds & (
                 (exposure.birth_weight < 1000)
@@ -97,12 +96,12 @@ class LBWSGDistribution:
 
         exposure.loc[shift_down, 'gestation_time'] = (self.max_gt_by_bw
                                                       .loc[exposure.loc[shift_down, 'birth_weight']]
-                                                      .values)
+                                                      .values) - eps
         exposure.loc[shift_left, 'birth_weight'] = (self.max_bw_by_gt
                                                     .loc[exposure.loc[shift_left, 'gestation_time']]
-                                                    .values)
-        exposure.loc[tmrel, 'gestation_time'] = 42
-        exposure.loc[tmrel, 'birth_weight'] = 4500
+                                                    .values) - eps
+        exposure.loc[tmrel, 'gestation_time'] = 42 - eps
+        exposure.loc[tmrel, 'birth_weight'] = 4500 - eps
         return exposure
 
     def _get_categorical_index(self, exposure):
@@ -140,8 +139,15 @@ class LBWSGDistribution:
         return max_gt_by_bw, max_bw_by_gt
 
 
+def get_exposure_data(builder, risk):
+    exposure = data_transformations.get_exposure_data(builder, risk)
+    exposure[MISSING_CATEGORY] = 0.0
+    return exposure
+
+
 def get_categories_by_interval(builder, risk):
     category_dict = builder.data.load(f'{risk}.categories')
+    category_dict[MISSING_CATEGORY] = 'Birth prevalence - [37, 38) wks, [1000, 1500) g'
     cats = (pd.DataFrame.from_dict(category_dict, orient='index')
             .reset_index()
             .rename(columns={'index': 'cat', 0: 'name'}))
@@ -163,8 +169,8 @@ def get_intervals_from_name(name: str) -> Tuple[pd.Interval, pd.Interval]:
                     .replace(') wks [', ' ')
                     .replace(') g', ''))
     numbers_only = [int(n) for n in numbers_only.split()]
-    return (pd.Interval(numbers_only[0], numbers_only[1], closed='right'),
-            pd.Interval(numbers_only[2], numbers_only[3], closed='right'))
+    return (pd.Interval(numbers_only[0], numbers_only[1], closed='left'),
+            pd.Interval(numbers_only[2], numbers_only[3], closed='left'))
 
 
 class LBWSGRiskEffect:
