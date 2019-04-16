@@ -34,6 +34,9 @@ components:
             - RiskEffect('risk_factor.child_underweight', 'cause.measles.incidence_rate')
         disease.special_disease:
             - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
+        metrics:
+            - Disability()
+            - MortalityObserver()
     neonatal:
         components:
             - LBWSGRisk()
@@ -43,7 +46,7 @@ components:
             - LBWSGRiskEffect('cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
             - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality')
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality')
-            - NeonatalPreterm()
+            - NeonatalIntervention()
 
 configuration:
     input_data:
@@ -62,7 +65,7 @@ configuration:
             year: 2022
             month: 1
             day: 1
-        step_size: 1
+        step_size: 30
     population:
         age_start: 0
         age_end: 5
@@ -81,6 +84,20 @@ configuration:
         mortality: True
         recoverable: True
 
+    neonatal_intervention:
+        proportion: 0.0
+        birth_weight_shift: 100  # grams
+        gestation_time_shift: 0  # weeks
+        stunting_shift: 0.3      # z-score
+        wasting_shift: 0.3       # z-score
+        underweight_shift: 0.0   # z-score
 
-
-   
+    metrics:
+        disability:
+            by_age: True
+            by_sex: True
+            by_year: True
+        mortality:
+            by_age: True
+            by_sex: True
+            by_year: True
