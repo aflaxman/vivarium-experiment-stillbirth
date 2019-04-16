@@ -65,7 +65,7 @@ configuration:
             year: 2022
             month: 1
             day: 1
-        step_size: 30
+        step_size: 1
     population:
         age_start: 0
         age_end: 5
