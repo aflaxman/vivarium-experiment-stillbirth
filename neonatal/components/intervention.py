@@ -5,7 +5,12 @@ class NeonatalIntervention:
 
     configuration_defaults = {
         'neonatal_intervention': {
-            'proportion': 1.0
+            'proportion': 1.0,
+            'birth_weight_shift': 0,  # grams
+            'gestation_time_shift': 0,  # weeks
+            'stunting_shift': 0,  # z-score
+            'wasting_shift': 0,  # z-score
+            'underweight_shift': 0,  # z-score
         }
     }
 
@@ -14,16 +19,20 @@ class NeonatalIntervention:
 
     def setup(self, builder):
         self.config = builder.configuration['neonatal_intervention']
-        if self.config.proportion < 0 or self.config.proportion > 1:
-            raise ValueError(f'The proportion for neonatal intervention must be between 0 and 1.'
-                             f'You specified {self.config.proportion}.')
-
+        validate_configuration(self.config.to_dict())
         self.randomness = builder.randomness.get_stream('neonatal_intervention_enrollment')
-
         columns_created = ['neonatal_treatment_status']
         self.population_view = builder.population.get_view(columns_created)
         builder.population.initializes_simulants(self.on_initialize_simulants,
                                                  creates_columns=columns_created)
+        builder.value.register_value_modifier('low_birth_weight_and_short_gestation.raw_exposure',
+                                              self.adjust_lbwsg)
+        builder.value.register_value_modifier('child_stunting.exposure',
+                                              self.adjust_stunting)
+        builder.value.register_value_modifier('child_wasting.exposure',
+                                              self.adjust_wasting)
+        builder.value.register_value_modifier('child_underweight.exposure',
+                                              self.adjust_underweight)
 
     def on_initialize_simulants(self, pop_data):
         pop = pd.DataFrame({'neonatal_treatment_status': 'not_treated'}, index=pop_data.index)
@@ -32,3 +41,30 @@ class NeonatalIntervention:
         pop.loc[treated, 'neonatal_treatment_status'] = 'treated'
 
         self.population_view.update(pop)
+
+    def adjust_lbwsg(self, index, exposure):
+        pop = self.population_view.get(index)
+        exposure['birth_weight'] += self.config.birth_weight_shift * (pop.neonatal_treatment_status == 'treated')
+        exposure['gestation_time'] += self.config.gestation_time_shift * (pop.neonatal_treatment_status == 'treated')
+        return exposure
+
+    def adjust_stunting(self, index, exposure):
+        pop = self.population_view.get(index)
+        return exposure + self.config.stunting_shift * (pop.neonatal_treatment_status == 'treated')
+
+    def adjust_wasting(self, index, exposure):
+        pop = self.population_view.get(index)
+        return exposure + self.config.wasting_shift * (pop.neonatal_treatment_status == 'treated')
+
+    def adjust_underweight(self, index, exposure):
+        pop = self.population_view.get(index)
+        return exposure + self.config.underweight_shift * (pop.neonatal_treatment_status == 'treated')
+
+
+def validate_configuration(config):
+    if not (0 <= config.proportion <= 1):
+        raise ValueError(f'The proportion for neonatal intervention must be between 0 and 1.'
+                         f'You specified {config.proportion}.')
+    for key in config:
+        if 'shift' in key and config[key] < 0:
+            raise ValueError(f'Additive shift for {key} must be positive.')
