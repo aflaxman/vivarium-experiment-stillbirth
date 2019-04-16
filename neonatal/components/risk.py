@@ -1,8 +1,11 @@
 from typing import Tuple
 
 import pandas as pd
-from vivarium_public_health.utilities import EntityString
-from vivarium_public_health.risks.data_transformations import get_exposure_data
+from vivarium_public_health.utilities import EntityString, TargetString
+import vivarium_public_health.risks.data_transformations as data_transformations
+from vivarium_public_health.risks import RiskEffect
+
+MISSING_CATEGORY = 'cat212'
 
 
 class LBWSGRisk:
@@ -58,7 +61,9 @@ class LBWSGDistribution:
         self.intervals_by_category = self.categories_by_interval.reset_index().set_index('cat')
         self.max_gt_by_bw, self.max_bw_by_gt = self._get_boundary_mappings()
 
-        self.exposure_parameters = builder.lookup.build_table(get_exposure_data(builder, self.risk))
+        self.exposure_parameters = builder.lookup.build_table(
+            data_transformations.get_exposure_data(builder, self.risk)
+        )
 
     def get_birth_weight_and_gestational_age(self, index):
         category_draw = self.randomness.get_draw(index, additional_key='category')
@@ -72,9 +77,7 @@ class LBWSGDistribution:
 
     def convert_to_categorical(self, exposure):
         exposure = self._convert_boundary_cases(exposure)
-        cats = self.categories_by_interval
-        exposure_bw_gt_index = exposure.set_index(['gestation_time', 'birth_weight']).index
-        categorical_exposure = cats.iloc[cats.index.get_indexer(exposure_bw_gt_index, method=None)]
+        categorical_exposure = self.categories_by_interval.iloc[self._get_categorical_index(exposure)]
         categorical_exposure.index = exposure.index
         return categorical_exposure
 
@@ -114,6 +117,7 @@ class LBWSGDistribution:
             idx = row['index']
             bw_draw = draws['birth_weight'][idx]
             gt_draw = draws['gestation_time'][idx]
+
             intervals = self.intervals_by_category.loc[row['cat']]
 
             birth_weight = (intervals.birth_weight.left
@@ -159,9 +163,58 @@ def get_intervals_from_name(name: str) -> Tuple[pd.Interval, pd.Interval]:
                     .replace(') wks [', ' ')
                     .replace(') g', ''))
     numbers_only = [int(n) for n in numbers_only.split()]
-    return (pd.Interval(numbers_only[0], numbers_only[1], closed='left'),
-            pd.Interval(numbers_only[2], numbers_only[3], closed='left'))
+    return (pd.Interval(numbers_only[0], numbers_only[1], closed='right'),
+            pd.Interval(numbers_only[2], numbers_only[3], closed='right'))
 
 
+class LBWSGRiskEffect:
+    """A component to model the impact of the low birth weight and short gestation
+     risk factor on the target rate of some affected entity.
+    """
 
+    configuration_defaults = {
+        'effect_of_risk_on_target': {
+            'measure': {
+                'relative_risk': None,
+            }
+        }
+    }
 
+    def __init__(self, target: str):
+        """
+        Parameters
+        ----------
+        target :
+            Type, name, and target rate of entity to be affected by risk factor,
+            supplied in the form "entity_type.entity_name.measure"
+            where entity_type should be singular (e.g., cause instead of causes).
+        """
+        self.risk = EntityString('risk_factor.low_birth_weight_and_short_gestation')
+        self.target = TargetString(target)
+        self.configuration_defaults = {
+            f'effect_of_{self.risk.name}_on_{self.target.name}': {
+                self.target.measure: RiskEffect.configuration_defaults['effect_of_risk_on_target']['measure']
+            }
+        }
+
+    def setup(self, builder):
+        self.randomness = builder.randomness.get_stream(f'effect_of_{self.risk.name}_on_{self.target.name}')
+        self.relative_risk = builder.lookup.build_table(self.get_relative_risk_data(builder))
+        self.population_attributable_fraction = builder.lookup.build_table(
+            data_transformations.get_population_attributable_fraction_data(builder, self.risk, self.target, self.randomness)
+        )
+
+        self.exposure_effect = data_transformations.get_exposure_effect(builder, self.risk)
+
+        builder.value.register_value_modifier(f'{self.target.name}.{self.target.measure}',
+                                              modifier=self.adjust_target)
+        builder.value.register_value_modifier(f'{self.target.name}.{self.target.measure}.paf',
+                                              modifier=self.population_attributable_fraction)
+
+    def adjust_target(self, index, target):
+        return self.exposure_effect(target, self.relative_risk(index))
+
+    def get_relative_risk_data(self, builder):
+        rr_data = data_transformations.get_relative_risk_data(builder, self.risk, self.target, self.randomness)
+        rr_data[MISSING_CATEGORY] = (rr_data['cat106'] + rr_data['cat116']) / 2
+        return rr_data

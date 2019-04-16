@@ -18,13 +18,6 @@ components:
             - NeonatalSWC_without_incidence('neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma')
             - NeonatalSWC_without_incidence('hemolytic_disease_and_other_neonatal_jaundice')
         risks:
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality')
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma.excess_mortality')
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
-
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.diarrheal_diseases.excess_mortality')
-            - RiskEffect('risk_factor.low_birth_weight_and_short_gestation', 'cause.lower_respiratory_infections.excess_mortality')
-
             - Risk('alternative_risk_factor.child_wasting')
             - RiskEffect('risk_factor.child_wasting', 'cause.diarrheal_diseases.incidence_rate')
             - RiskEffect('risk_factor.child_wasting', 'cause.lower_respiratory_infections.incidence_rate')
@@ -45,6 +38,11 @@ components:
         components:
             - LBWSGRisk()
             - NeonatalPreterm()
+            - LBWSGRiskEffect('cause.neonatal_sepsis_and_other_neonatal_infections.excess_mortality')
+            - LBWSGRiskEffect('cause.neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma.excess_mortality')
+            - LBWSGRiskEffect('cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
+            - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality')
+            - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality')
 
 configuration:
     input_data:
