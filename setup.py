@@ -14,7 +14,7 @@ setup(
         'pandas',
         'numpy<=1.15.4',
         'scipy',
-        'vivarium-cluster-tools>=1.0.7',
+        'vivarium-cluster-tools>=1.0.8',
         'vivarium>=0.8.18',
         'vivarium_public_health>=0.9.10',
         'vivarium_inputs[data]>=2.0.3'
