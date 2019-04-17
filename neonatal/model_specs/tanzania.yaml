@@ -35,6 +35,10 @@ components:
         metrics:
             - Disability()
             - MortalityObserver()
+            - CategoricalRiskObserver('risk_factor.child_wasting')
+            - CategoricalRiskObserver('risk_factor.child_stunting')
+            - CategoricalRiskObserver('risk_factor.child_underweight')
+            - CategoricalRiskObserver('risk_factor.low_birth_weight_and_short_gestation')
     neonatal:
         components:
             - LBWSGRisk()
