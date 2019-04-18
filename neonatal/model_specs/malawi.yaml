@@ -59,7 +59,7 @@ configuration:
         extrapolate: True
     time:
         start:
-            year: 2021
+            year: 2020
             month: 1
             day: 1
         end:
