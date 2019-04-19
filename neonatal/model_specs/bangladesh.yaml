@@ -32,13 +32,6 @@ components:
             - RiskEffect('risk_factor.child_underweight', 'cause.diarrheal_diseases.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.lower_respiratory_infections.incidence_rate')
             - RiskEffect('risk_factor.child_underweight', 'cause.measles.incidence_rate')
-        metrics:
-            - Disability()
-            - MortalityObserver()
-            - CategoricalRiskObserver('risk_factor.child_wasting')
-            - CategoricalRiskObserver('risk_factor.child_stunting')
-            - CategoricalRiskObserver('risk_factor.child_underweight')
-            - CategoricalRiskObserver('risk_factor.low_birth_weight_and_short_gestation')
     neonatal:
         components:
             - LBWSGRisk()
@@ -51,6 +44,13 @@ components:
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality')
     vivarium_public_health.disease.special_disease:
         - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
+    vivarium_public_health.metrics:
+        - Disability()
+        - MortalityObserver()
+        - CategoricalRiskObserver('risk_factor.child_wasting')
+        - CategoricalRiskObserver('risk_factor.child_stunting')
+        - CategoricalRiskObserver('risk_factor.child_underweight')
+        - CategoricalRiskObserver('risk_factor.low_birth_weight_and_short_gestation')
 
 configuration:
     input_data:
@@ -62,13 +62,13 @@ configuration:
         extrapolate: True
     time:
         start:
-            year: 2021
+            year: 2020
             month: 1
             day: 1
         end:
-            year: 2022
-            month: 1
-            day: 1
+            year: 2025
+            month: 12
+            day: 31
         step_size: 1
     population:
         age_start: 0

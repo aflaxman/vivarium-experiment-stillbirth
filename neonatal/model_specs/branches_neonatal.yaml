@@ -1,5 +1,5 @@
 input_draw_count: 25
-random_seed_count: 5
+random_seed_count: 10
 
 branches:
     - neonatal_intervention:  # Baseline scenario
@@ -7,8 +7,39 @@ branches:
           birth_weight_shift: 0
           stunting_shift: 0
           wasting_shift: 0
-    - neonatal_intervention:  # Intervention scenarios
+    # Intervention scenarios
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [50, 100, 150]
+          stunting_shift: 0.0
+          wasting_shift: 0.0
+    - neonatal_intervention:
           proportion: 0.8
           birth_weight_shift: [0, 50, 100, 150]
-          stunting_shift: [0, 0.15, 0.3, 0.45]
-          wasting_shift: [0, 0.15, 0.3, 0.45]
+          stunting_shift: 0.1
+          wasting_shift: 0.1
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [0, 50, 100, 150]
+          stunting_shift: 0.2
+          wasting_shift: 0.2
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [0, 50, 100, 150]
+          stunting_shift: 0.3
+          wasting_shift: 0.3
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [0, 50, 100, 150]
+          stunting_shift: 0.4
+          wasting_shift: 0.4
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [0, 50, 100, 150]
+          stunting_shift: 0.5
+          wasting_shift: 0.5
+    - neonatal_intervention:
+          proportion: 0.8
+          birth_weight_shift: [0, 50, 100, 150]
+          stunting_shift: 0.6
+          wasting_shift: 0.6
