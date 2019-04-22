@@ -18,6 +18,7 @@ class NeonatalIntervention:
         self.name = 'neonatal_intervention'
 
     def setup(self, builder):
+        self.start_time = pd.Timestamp(**builder.configuration.time.start.to_dict())
         self.config = builder.configuration['neonatal_intervention']
         validate_configuration(self.config.to_dict())
         self.randomness = builder.randomness.get_stream('neonatal_intervention_enrollment')
@@ -36,9 +37,10 @@ class NeonatalIntervention:
 
     def on_initialize_simulants(self, pop_data):
         pop = pd.DataFrame({'neonatal_treatment_status': 'not_treated'}, index=pop_data.index)
-        treatment_probability = self.config.proportion
-        treated = self.randomness.filter_for_probability(pop.index, treatment_probability)
-        pop.loc[treated, 'neonatal_treatment_status'] = 'treated'
+        if pop_data.creation_time > self.start_time:
+            treatment_probability = self.config.proportion
+            treated = self.randomness.filter_for_probability(pop.index, treatment_probability)
+            pop.loc[treated, 'neonatal_treatment_status'] = 'treated'
 
         self.population_view.update(pop)
 
