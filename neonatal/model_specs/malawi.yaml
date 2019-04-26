@@ -42,8 +42,6 @@ components:
             - LBWSGRiskEffect('cause.hemolytic_disease_and_other_neonatal_jaundice.excess_mortality')
             - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality')
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality')
-    vivarium_public_health.disease.special_disease:
-        - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
     vivarium_public_health.metrics:
         - Disability()
         - MortalityObserver()
@@ -51,6 +49,8 @@ components:
         - CategoricalRiskObserver('risk_factor.child_stunting')
         - CategoricalRiskObserver('risk_factor.child_underweight')
         - CategoricalRiskObserver('risk_factor.low_birth_weight_and_short_gestation')
+    vivarium_public_health.disease.special_disease:
+        - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
 
 
 configuration:
