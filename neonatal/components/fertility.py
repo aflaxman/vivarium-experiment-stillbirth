@@ -28,7 +28,18 @@ class FertilityWStillbirthDeterministic:
 
         self.simulant_creator = builder.population.get_simulant_creator()
 
+        self.population_view = builder.population.get_view(['alive'])
+        builder.population.initializes_simulants(self.on_initialize_simulants)
+
         builder.event.register_listener('time_step', self.on_time_step)
+
+
+    def on_initialize_simulants(self, pop_data):
+        if 'alive' in pop_data.user_data:
+            pop = pd.DataFrame(index=pop_data.index)
+            pop['alive'] = pop_data.user_data['alive']
+            self.population_view.update(pop)
+
 
     def on_time_step(self, event):
         """Adds a set number of simulants to the population each time step.
@@ -54,7 +65,7 @@ class FertilityWStillbirthDeterministic:
                                   population_configuration={
                                       'age_start': 0,
                                       'age_end': 0,
-                                      'alive': vital_status,  # FIXME: I don't think this is doing anything, perhaps it needs to be implemented in an initialize_simulants method
+                                      'alive': vital_status,  # store this in the user_data dictionary for use in the on_initialize_simulants method
                                       'sim_state': 'time_step',
                                   })
 

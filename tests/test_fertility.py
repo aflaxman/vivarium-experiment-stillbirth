@@ -43,7 +43,12 @@ def test_FertilityWStillbirthDeterministic(config):
     pop = simulation.get_population()
 
     assert num_steps == num_days // step_size
-    assert np.all(pop.alive == 'alive')
+
+    # imprecise tests
+    assert not np.all(pop.alive == 'alive')
+    assert np.any(pop.alive == 'stillborn')
+
+    # more precise tests
     assert int(num_days * annual_live_births / 365) == sum(pop.alive != 'stillborn') - pop_size
     assert int(num_days * annual_stillbirths / 365) == sum(pop.alive == 'stillborn')
 
