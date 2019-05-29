@@ -5,7 +5,7 @@ import pandas as pd
 from vivarium.testing_utilities import TestPopulation, metadata, build_table
 from vivarium.interface.interactive import setup_simulation, initialize_simulation
 
-from neonatal.components.fertility import FertilityWStillbirthDeterministic
+from stillbirth.components.fertility import FertilityWStillbirthDeterministic
 
 
 @pytest.fixture()
