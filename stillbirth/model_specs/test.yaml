@@ -15,13 +15,6 @@ components:
     vivarium_public_health:
         disease.models:
             - SIS('diarrheal_diseases')
-            - SIS('lower_respiratory_infections')
-            - SIR_fixed_duration('measles', '10')  # days
-            - NeonatalSWC_without_incidence('neonatal_sepsis_and_other_neonatal_infections')
-            - NeonatalSWC_without_incidence('neonatal_encephalopathy_due_to_birth_asphyxia_and_trauma')
-            - NeonatalSWC_without_incidence('hemolytic_disease_and_other_neonatal_jaundice')
-        disease.special_disease:
-            - RiskAttributableDisease('cause.protein_energy_malnutrition', 'risk_factor.child_wasting')
     vivarium_public_health.metrics:
         - Disability()
         - MortalityObserver()
