@@ -9,12 +9,11 @@ components:
         population:
             - BasePopulation()
             - Mortality()
+        disease.models:
+            - SIS('diarrheal_diseases')
     stillbirth.components:
         fertility:
             - FertilityWStillbirthDeterministic()
-    vivarium_public_health:
-        disease.models:
-            - SIS('diarrheal_diseases')
     vivarium_public_health.metrics:
         - Disability()
         - MortalityObserver()
