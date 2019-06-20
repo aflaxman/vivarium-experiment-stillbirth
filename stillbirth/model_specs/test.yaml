@@ -13,7 +13,7 @@ components:
             - SIS('diarrheal_diseases')
     stillbirth.components:
         fertility:
-            - FertilityWStillbirthDeterministic()
+            - FertilityWStillbirthCrudeBirthRate()
     vivarium_public_health.metrics:
         - Disability()
         - MortalityObserver()
@@ -40,7 +40,7 @@ configuration:
         age_start: 0
         age_end: 5
         exit_age: 5
-        population_size: 100
+        population_size: 100_000
 
     protein_energy_malnutrition:
         threshold: ['cat1', 'cat2'] # provide the categories to get PEM.

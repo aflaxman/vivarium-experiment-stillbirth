@@ -15,8 +15,8 @@ setup(
         'numpy<=1.15.4',
         'scipy',
         'vivarium-cluster-tools>=1.0.9',
-        'vivarium>=0.8.20',
-        'vivarium_public_health>=0.9.12',
+        'vivarium==0.8.20',
+        'vivarium_public_health==0.9.12',
         'vivarium_inputs[data]>=2.0.3'
     ],
 )
